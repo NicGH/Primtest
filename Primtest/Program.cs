@@ -1,7 +1,7 @@
 ﻿using System;
-using Primtest;
+using Primtests;
 
-namespace Primtest
+namespace Primtests
 {
     public class Node
     {
@@ -90,28 +90,52 @@ namespace Primtest
     }
 }
 
-class Eratosthenes // nächster Task: Atkin
+class Primtest
 {
     Node root;
+    Node current;
 
-    void Sieb(LinkedList List)
+    void Eratosthenes (LinkedList List)
     {
         root = List.head;
-        if (List == null)
+        current = root;
+        int counter = 1;
+        if (current == null)
         {
             Console.WriteLine("The list is empty!");
+            return;
         }
         do {
-            int counter = 1;
-            if (root.Value != counter)
+            if (current.Value != counter)
                 {
                 Console.WriteLine("The list must start with 1 and be both continuous and sorted in ascending order.");
                 return;
             }
-            root = root.Next;
+            current = current.Next;
             counter++;
-        } while (root.Next != null);
+        } while (current != null);
 
+        root = root.Next;
+        current = root;
+        int maxIteration = counter;
+        counter = 2;
+        for (int i = 2; i < Math.Floor(Math.Sqrt(maxIteration)); i++)
+            {
+            while (current != null)
+            {
+                if (current.Value % counter == 0)
+                {
+                    current.Next = current.Next.Next;
+                    current = current.Next;
+                }
+            }
+        }
+        current = root;
+        while (current != null)
+            {
+            Console.WriteLine(current.Value);
+            current = current.Next;
+        }
     }
 
 
@@ -120,9 +144,11 @@ class Eratosthenes // nächster Task: Atkin
         static void Main(string[] args)
         {
             LinkedList Prim = new LinkedList();
-            Prim.add(0);
             Prim.fillUntil(100);
             Prim.print();
+            Primtest Sieb = new Primtest();
+            Sieb.Eratosthenes(Prim);
+            
 
             //Console.WriteLine("Press Enter to quit");
             //while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
