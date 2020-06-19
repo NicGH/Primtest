@@ -18,23 +18,23 @@ namespace Primtests
     public class LinkedList
     {
         Node current;
-        public Node head { get; set; }
+        public Node Head { get; set; }
         Node insert;
 
-        public void add(int value)
+        public void Add(int value)
         {
             insert = new Node(value);
-            if (head == null)
+            if (Head == null)
             {
-                head = insert;
+                Head = insert;
                 return;
             }
 
-            current = head;
+            current = Head;
             if (value <= current.Value)
             {
-                insert.Next = head;
-                head = insert;
+                insert.Next = Head;
+                Head = insert;
                 return;
             }
             else
@@ -62,30 +62,41 @@ namespace Primtests
             }
         }
 
-        public void print()
+        public void Print()
         {
-            if (head == null)
+            if (Head == null)
             {
                 Console.WriteLine("list is empty!");
             }
             else
             {
-                current = head;
+                Console.WriteLine();
+                Console.WriteLine("Die Liste enthält folgende Zahlen:");
+                System.Threading.Thread.Sleep(500);
+                current = Head;
                 while (current != null)
                 {
-                    Console.WriteLine(current.Value);
+                    Console.Write(current.Value + "; ");
                     current = current.Next;
+                    System.Threading.Thread.Sleep(2);
                 }
+                Console.WriteLine();
+                Console.WriteLine("Zum Fortfahren Enter drücken");
+                while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
             }    
         }
-        public void fillUntil(int value)
+        public void FillUntil(int value)
         {
             int Counter = 1;
             for (int i = 1; i <= value; i++)
             {
-                add(Counter);
+                Add(Counter);
                 Counter++;
             }
+            Console.WriteLine("Die Zahlen 1 bis " + value + " wurden eingefügt");
+            System.Threading.Thread.Sleep(250);
+            Console.WriteLine("Zum Fortfahren Enter drücken");
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
         }
     }
 }
@@ -95,63 +106,127 @@ class Primtest
     Node root;
     Node current;
 
-    void Eratosthenes (LinkedList List)
+    void Eratosthenes(LinkedList List)
     {
-        root = List.head;
+        root = List.Head;
         current = root;
-        int counter = 1;
+        int counter = 0;
+        Node divider;
+
+        Console.WriteLine(); Console.WriteLine();
+        Console.WriteLine("Das Sieb beginnt!");
+        System.Threading.Thread.Sleep(500);
+
+        Console.WriteLine();
         if (current == null)
         {
             Console.WriteLine("The list is empty!");
             return;
         }
-        do {
+        do
+        {
+            counter++;
             if (current.Value != counter)
-                {
+            {
                 Console.WriteLine("The list must start with 1 and be both continuous and sorted in ascending order.");
                 return;
             }
+//           Console.WriteLine(current.Value + " = " + counter); // DEBUG
             current = current.Next;
-            counter++;
+
         } while (current != null);
 
-        root = root.Next;
-        current = root;
-        int maxIteration = counter;
-        counter = 2;
-        for (int i = 2; i < Math.Floor(Math.Sqrt(maxIteration)); i++)
+        if (counter < 3)
+        {
+            Console.WriteLine("Ende der Liste erreicht.");
+            Console.WriteLine("Die Primzahlen lauten:");
+            Console.WriteLine("2");
+            return;
+        }
+        else
+        {
+            root = root.Next;
+            current = root;
+            divider = root;
+            int limit = (int)Math.Floor(Math.Sqrt(counter));
+            while (divider.Value <= limit)
             {
+                Console.WriteLine("Teiler von " + divider.Value + " werden geprüft... entfernt werden:");
+                System.Threading.Thread.Sleep(250);
+                while (current.Next != null) // solange nächstes Element existiert
+                {
+                    if (current.Next.Next != null) // und auch übernächstes Element existiert
+                    {
+                        if (current.Next.Value % divider.Value == 0 && current.Next.Value != divider.Value) // falls nächstes Element geteilt werden kann
+                        {
+                            Console.Write(current.Next.Value + "; ");
+                            current.Next = current.Next.Next; // dann überspringen
+                            System.Threading.Thread.Sleep(divider.Value*5);
+                        }
+                        current = current.Next; // und zum nächsten Element wechseln
+                    }
+                    else // sonst, falls kein übernächstes Element existiert
+                    {
+                        if (current.Next.Value % divider.Value == 0 && current.Next.Value != divider.Value) // aber nächstes Element geteilt werden kann
+                        {
+                            Console.Write(current.Next.Value + "; ");
+                            current.Next = null; // beende Liste bei diesem Element
+                         }
+                        else
+                        {
+                            current = current.Next;  // sonst beende nach dem nächsten Element
+                        }
+                    }
+                }
+                //Console.WriteLine("Ende der Liste erreicht.");  // DEBUG
+                Console.WriteLine();
+                Console.WriteLine();
+                current = root; // gehe zum Anfang der Liste
+                divider = divider.Next;
+                System.Threading.Thread.Sleep(1000);
+            }
+            current = root;
+            Console.WriteLine("Die Liste wurde gesiebt.");
+            Console.WriteLine("Zum Fortfahren Enter drücken");
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
+            Console.WriteLine();
+            Console.WriteLine("Die Primzahlen bis " + counter + " lauten:");
+            int i = 0;
             while (current != null)
             {
-                if (current.Value % counter == 0)
+                if (current.Next != null)
                 {
-                    current.Next = current.Next.Next;
+                    Console.Write(current.Value + ", ");
                     current = current.Next;
+                    i++;
+                    System.Threading.Thread.Sleep(5000/counter);
+                }
+                else
+                {
+                    Console.Write(current.Value);
+                    current = current.Next;
+                    i++;
                 }
             }
-        }
-        current = root;
-        while (current != null)
-            {
-            Console.WriteLine(current.Value);
-            current = current.Next;
+            Console.WriteLine();
+            Console.WriteLine("(" + i + " Primzahlen)");
         }
     }
 
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main(/*string[] args*/)
         {
             LinkedList Prim = new LinkedList();
-            Prim.fillUntil(100);
-            Prim.print();
+            Prim.FillUntil(5000);
+            Prim.Print();
             Primtest Sieb = new Primtest();
             Sieb.Eratosthenes(Prim);
-            
 
-            //Console.WriteLine("Press Enter to quit");
-            //while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
+            Console.WriteLine();
+            Console.WriteLine("Zum Beenden Enter drücken");
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
         }
     }
 }
